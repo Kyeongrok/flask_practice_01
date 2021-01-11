@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-prd
+  namespace: default
+data:
+  DB_URL: localhost2
+  DB_USER: myuser2
+  DB_PASS: mypass2
+  DEBUG_INFO: debug2
+

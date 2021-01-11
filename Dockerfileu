@@ -1,0 +1,5 @@
+FROM gcr.io/static-lens-266702/flask-test
+COPY . /app
+WORKDIR /app
+RUN chmod +x /app/app.py
+CMD ["python3", "app.py"]

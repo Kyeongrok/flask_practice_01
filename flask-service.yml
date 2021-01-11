@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: python-service
+  labels:
+    app.python.server: service # service의 레이블
+spec:
+  type: LoadBalancer
+  ports:
+  - protocol: TCP
+    port: 2222 # service의 port
+    targetPort: 8080 # pod의 target port
+  selector:
+    app.python.server: node # 연결 시킬 pod의 label
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.python.server: deployment
+  name: python-server # deployment의 이름
+spec:
+  replicas: 1 # 개체수
+  selector:
+    matchLabels:
+      app.python.server: node # pod의 label을 선택해서 가져오기
+  template:
+    metadata:
+      labels:
+        app.python.server: node # pod의 label을 지정
+    spec:
+      containers:
+        - image: gcr.io/static-lens-266702/flask-test:v1.0
+          name: python-server
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: config-volume
+              mountPath: "/krk"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: config-dev
