@@ -8,4 +8,4 @@ data:
   DB_USER: kyeongrok
   DB_PASS: mypass
   DEBUG_INFO: debug
-
+  app.py: print('hello5')

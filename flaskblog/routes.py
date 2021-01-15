@@ -1,10 +1,8 @@
-from flask import Flask, render_template, flash, redirect, url_for
-from forms import RegistrationForm, LoginForm
-from os import environ
-import glob, csv
+from flask import render_template, flash, redirect, url_for
+from flaskblog import app
+from flaskblog.forms import RegistrationForm, LoginForm
+from flaskblog.model import User, Post
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = '48494dc3dfa160ba017699929a90ecc1'
 posts = [
     {
         'author':'Corey Schafer',
@@ -19,6 +17,7 @@ posts = [
         'date_posted': 'April 20, 2018'
     }
 ]
+
 @app.route('/')
 def home():
     # 해당 위치에 파일이 있는지
@@ -41,6 +40,3 @@ def register():
 def login():
     form = LoginForm()
     return render_template('login.html', title='Login', form=form)
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
