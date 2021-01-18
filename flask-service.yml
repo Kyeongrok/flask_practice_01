@@ -30,7 +30,7 @@ spec:
         app.python.server: node # pod의 label을 지정
     spec:
       containers:
-        - image: gcr.io/static-lens-266702/flask-test:v1.4
+        - image: gcr.io/static-lens-266702/flask-test:v1.9
           command: ["/bin/sh","-c"]
           args: ["cp /config/app2.py /app/run.py; python3 /app/main.py"]
           name: python-server
