@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for, request
 from flaskblog import app, db, bcrypt
 from flaskblog.forms import RegistrationForm, LoginForm
 from flaskblog.model import User, Post
@@ -21,7 +21,8 @@ posts = [
 @app.route('/')
 def home():
     # 해당 위치에 파일이 있는지
-    return render_template('home.html', posts=posts)
+    namespace = request.args.get('namespace', default = 'ns-abc-def', type = str)
+    return render_template('home.html', posts=posts, namespace=namespace)
 
 @app.route('/about')
 def about():
@@ -44,3 +45,9 @@ def register():
 def login():
     form = LoginForm()
     return render_template('login.html', title='Login', form=form)
+
+@app.route('/logs')
+def view_logs():
+    # 해당 위치에 파일이 있는지
+    # page = request.args.get('page', default = 1, type = int)
+    return render_template('view_logs.html')
