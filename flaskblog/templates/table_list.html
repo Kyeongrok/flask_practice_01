@@ -1,0 +1,8 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Table List Page</h1>
+    {% for table_name in list %}
+        <p>{{table_name}}</p>
+    {% endfor %}
+{% endblock %}

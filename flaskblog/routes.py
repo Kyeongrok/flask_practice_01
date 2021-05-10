@@ -1,7 +1,13 @@
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for, request
+
 from flaskblog import app, db, bcrypt
-from flaskblog.forms import RegistrationForm, LoginForm
+from flaskblog.forms import RegistrationForm, LoginForm, CreateTableForm
 from flaskblog.model import User, Post
+from flaskblog.domain.dynamo_table import Table
+import boto3
+
+
+dynamodb = boto3.resource('dynamodb')
 
 posts = [
     {
@@ -44,3 +50,24 @@ def register():
 def login():
     form = LoginForm()
     return render_template('login.html', title='Login', form=form)
+
+@app.route('/table_list')
+def table_list():
+    tables = Table().list_table()
+    # for table in tables['TableNames']:
+    #     print(type(table))
+    return render_template('table_list.html', title='Table List', list=tables['TableNames'])
+
+
+@app.route('/create_table', methods=['GET', 'POST'])
+def create_table():
+    form = CreateTableForm()
+    if form.validate_on_submit():
+        table_name = form.table_name.data
+
+        check_whether_the_table_has_been_exsist = None
+        Table().create_table(table_name)
+
+
+    return render_template('create_table.html', title='Create Table', form=form)
+

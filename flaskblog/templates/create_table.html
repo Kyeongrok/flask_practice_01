@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Create Table Page</h1>
+<div class="content-section">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Create Table</legend>
+            <div class="form-group">
+                {{ form.table_name.label(class="form-control-label")}}
+                {{ form.table_name(class="form-control form-control-lg")}}
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn-outline-info") }}
+        </div>
+    </form>
+</div>
+{% endblock %}
