@@ -5,6 +5,8 @@ from flaskblog.forms import RegistrationForm, LoginForm, CreateTableForm
 from flaskblog.model import User, Post
 from flaskblog.domain.dynamo_table import Table
 import boto3
+import ast, json
+from libs.DecimalEncoder import DecimalEncoder
 
 
 dynamodb = boto3.resource('dynamodb')
@@ -27,7 +29,9 @@ posts = [
 @app.route('/')
 def home():
     # 해당 위치에 파일이 있는지
-    return render_template('home.html', posts=posts)
+    # return render_template('home.html', posts=posts)
+    return redirect(url_for('auction_list'))
+
 
 @app.route('/about')
 def about():
@@ -53,10 +57,22 @@ def login():
 
 @app.route('/table_list')
 def table_list():
-    tables = Table().list_table()
+    tables = Table('auction2').list_table()
     # for table in tables['TableNames']:
     #     print(type(table))
     return render_template('table_list.html', title='Table List', list=tables['TableNames'])
+
+
+@app.route('/auction_list', methods=['GET', 'POST'])
+def auction_list():
+    t = Table('auction2')
+    r = t.select_by_pk('RAW#20200102')
+    l = []
+    for i in r['Items']:
+        d = ast.literal_eval((json.dumps(i, cls=DecimalEncoder)))
+        for row in d['data1']:
+            l.append(row)
+    return render_template('auction_list.html', title='Auction List', list=l)
 
 
 @app.route('/create_table', methods=['GET', 'POST'])

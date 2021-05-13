@@ -9,7 +9,7 @@ class Table():
         self.client = boto3.client('dynamodb')
 
     def list_table(self):
-        response = self.dynamodb.list_tables()
+        response = self.client.list_tables()
         return response
 
     def create_table(self, key_schema, attribute_definitions):

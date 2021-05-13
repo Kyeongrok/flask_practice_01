@@ -7,6 +7,7 @@ def file_insert_into_db(fn):
     p = Parser()
     jo = p.load_json_file(fn)
     sp = fn.replace('./data\\', '').replace('.json', '').split('_')
+    print(fn, len(jo))
     row = {
         'date': f'RAW#{sp[0]}',
         'prdcd_whsal_mrkt_new_cd': f'{1202}#{sp[1]}',
@@ -25,7 +26,7 @@ if __name__ == '__main__':
 
     # insert
     fl = glob.glob('./data/'+"*.json")
-    for fn in fl[23:1000]:
+    for fn in fl[:14]:
         print(fn)
         file_insert_into_db(fn)
         print(f'{fn} finished')
