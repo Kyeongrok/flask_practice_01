@@ -1,7 +1,7 @@
 from flaskblog.domain.dynamo_table import Table
 
 if __name__ == '__main__':
-    t = Table('auction')
+    t = Table('auction2')
     t.create_table(
         key_schema=[
             {

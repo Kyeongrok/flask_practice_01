@@ -29,14 +29,18 @@ class Table():
         return r
 
     def select_all(self):
-        table = self.dynamodb.Table(self.table_name)
         r = self.table.scan()
         return r
 
-    def select(self):
-        qdata = self.table.get_item(Key={"id": "qwer1234"})
+    def select_by_pk(self, pk):
+        # qdata = self.table.get_item(Key={"date": pk})
+        #
+        # print(qdata)
+        response = self.table.query(
+            KeyConditionExpression=Key('date').eq(pk)
+        )
 
-        print(qdata['Item'])
+        return response
 
         # table.meta.client.get_waiter('table_exists').wait(TableName=table_name)
         # print(f'{table_name} has been created')
