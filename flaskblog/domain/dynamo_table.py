@@ -57,3 +57,17 @@ class Table():
             KeyConditionExpression = Key('date').eq(date) & Key('prdcd_whsal_mrkt_new_cd').begins_with(f'{prd_cd}#')
         )
         print(response)
+
+    def insert_into_db(self, jo, date, prd_cd, rnum):
+        # print(jo)
+        row = {
+            'date': f'{date}',
+            'prdcd_whsal_mrkt_new_cd': f'{prd_cd}#{rnum}',
+            'data1': jo
+        }
+        try:
+            self.insert(row)
+        except Exception as e:
+            print(e)
+            print('error:', date, prd_cd, rnum)
+            exit(0)

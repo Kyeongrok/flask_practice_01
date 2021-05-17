@@ -16,7 +16,6 @@ class Parser():
                 dec_val = Decimal(str(value))
                 value = dec_val
                 d[key] = value
-        print('converted to Decimal finished...')
         return d
 
     def load_json_file(self, fn):
@@ -31,6 +30,7 @@ class Parser():
                 except Exception as e:
                     print(f'{__name__}', e)
                     exit(1)
+        print('load and converted to Decimal finished...')
         return r
 
     def sieve_columns(self, l):

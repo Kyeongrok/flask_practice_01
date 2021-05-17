@@ -39,7 +39,7 @@ def save_data(data, target_filename):
         if isinstance(data, dict): # 1개인경우 dict로 오기 때문에 감싸줌
             data = [data]
         # whsalMrktNewCode별로 구분해서 저장
-        data = Parser().make_map(data, 'whsalMrktNewCode')
+        # data = Parser().make_map(data, 'whsalMrktNewCode')
         f.write(json.dumps(data))
         print(f'{target_filename} saved...')
 
