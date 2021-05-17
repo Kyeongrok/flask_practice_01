@@ -3,6 +3,8 @@
 
 # Issues
 * column중에 float이 있는 경우 안들어가서 Decimal로 바꿔서 insert함
+* An error occurred (ValidationException) when calling the PutItem operation: Item size has exceeded the maximum allowed size
+* 400KB 초과 하면 안됨
 
 
 # Next

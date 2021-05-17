@@ -32,12 +32,10 @@ class Table():
         r = self.table.scan()
         return r
 
-    def select_by_pk(self, pk):
-        # qdata = self.table.get_item(Key={"date": pk})
-        #
-        # print(qdata)
+    def select_by_pk(self, pk, last_evaluated_key=None):
         response = self.table.query(
-            KeyConditionExpression=Key('date').eq(pk)
+            KeyConditionExpression=Key('date').eq(pk),
+            Limit=100
         )
 
         return response
@@ -54,8 +52,8 @@ class Table():
         print(response)
 
 
-    def select_pk_begins_with(self, date):
+    def select_pk_begins_with(self, date, prd_cd='1202'):
         response = self.table.query(
-            KeyConditionExpression = Key('date').eq(date) & Key('prdcd_whsal_mrkt_new_cd').begins_with('1202#')
+            KeyConditionExpression = Key('date').eq(date) & Key('prdcd_whsal_mrkt_new_cd').begins_with(f'{prd_cd}#')
         )
         print(response)

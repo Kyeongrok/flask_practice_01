@@ -1,23 +1,20 @@
 from flaskblog.domain.dynamo_table import Table
-import glob, json
-from test.auction_data_parser import Parser
+import glob
+from parse.auction_data_parser import Parser
 
 
-def file_insert_into_db(fn):
-    p = Parser()
-    jo = p.load_json_file(fn)
-    sp = fn.replace('./data\\', '').replace('.json', '').split('_')
-    print(fn, len(jo))
+def file_insert_into_db(jo, date, prd_cd, rnum):
+    # print(jo)
     row = {
-        'date': f'RAW#{sp[0]}',
-        'prdcd_whsal_mrkt_new_cd': f'{1202}#{sp[1]}',
+        'date': f'{date}',
+        'prdcd_whsal_mrkt_new_cd': f'{prd_cd}#{rnum}',
         'data1': jo
     }
     try:
         t.insert(row)
     except Exception as e:
         print(e)
-        print('error:', fn)
+        print('error:', date, prd_cd, rnum)
         exit(0)
 
 
@@ -25,12 +22,21 @@ if __name__ == '__main__':
     t = Table('auction2')
 
     # insert
-    fl = glob.glob('./data/'+"*.json")
-    for fn in fl[:14]:
-        print(fn)
-        file_insert_into_db(fn)
+    p = Parser()
+    fl = glob.glob('../crawl/20210514/'+"*.json")
+    for fn in fl[26:100]:
+        print('start load file', fn)
+        date, prd_cd = fn.replace('../crawl/', '').replace('.json', '').split('/')
+        jo = p.load_json_file(fn)
+        print('insert started ', fn, len(jo))
+        # jo = p.make_map(jo, 'whsalMrktNewCode')
+        for value in jo:
+            try:
+                file_insert_into_db(value, date, prd_cd, value['rnum'])
+                print(value['rnum'], 'has been succeed')
+            except Exception as e:
+                print(e)
         print(f'{fn} finished')
-        # file_insert_into_db('./data/20200102_350301.json')
 
 
 

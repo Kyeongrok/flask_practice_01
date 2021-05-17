@@ -66,13 +66,14 @@ def table_list():
 @app.route('/auction_list', methods=['GET', 'POST'])
 def auction_list():
     t = Table('auction2')
-    r = t.select_by_pk('RAW#20200102')
+    r = t.select_by_pk('20210514')
     l = []
     for i in r['Items']:
         d = ast.literal_eval((json.dumps(i, cls=DecimalEncoder)))
-        for row in d['data1']:
-            l.append(row)
-    return render_template('auction_list.html', title='Auction List', list=l)
+        l.append(d['data1'])
+    total = len(l)
+    print(l[0])
+    return render_template('auction_list.html', total=total, title='Auction List', list=l)
 
 
 @app.route('/create_table', methods=['GET', 'POST'])

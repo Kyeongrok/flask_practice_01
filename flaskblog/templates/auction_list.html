@@ -1,18 +1,26 @@
 {% extends "layout.html" %}
 {% block content %}
-  <a href="{{url_for('home', namespace="ns-abc-def")}}">{{"ns-abc-def"}}</a>
-  <a href="{{url_for('home', namespace="ns-abc-efg")}}">{{"ns-abc-efg"}}</a>
-  namespace:{{namespace}}
-    {% for post in list %}
-        <article class="media content-section">
-            <div class="media-body">
-                <div class="article-metadata">
-                    <a class="mr-2" href="#">{{ post.delngDe }}</a>
-                    <small class="text-muted">{{ post.whsalMrktNm }}</small>
-                </div>
-                <h2><a class="article-title" href="#">{{ post.stdUnitNewNm }}</a></h2>
-                <p class="article-content">{{ post.delngQy }}</p>
-            </div>
-        </article>
-    {% endfor %}
+  <a href="{{url_for('home', delng_de='20200102')}}">{{"20200102"}}</a>
+  <a href="{{url_for('home', delng_de='20200103')}}">{{"20200103"}}</a>
+  total: {{ total }}
+    <table>
+        <thead>
+            <td>경락일자</td>
+            <td>도매시장명</td>
+            <td>단위</td>
+            <td>수량</td>
+            <td>경락가격</td>
+        </thead>
+        <tbody>
+        {% for post in list %}
+        <tr>
+            <td>{{ post.delngDe }}</td>
+            <td>{{ post.whsalMrktNm }}</td>
+            <td>{{ post.stdUnitNewNm }}</td>
+            <td>{{ post.delngQy }}</td>
+            <td>{{ post.sbidPric }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock content %}
