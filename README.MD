@@ -6,6 +6,9 @@
 
 # Next
 * 날짜별로 모든 데이터 수집
+* crawl한 결과를 저장하는 기능
+  > pk는 date, sk는 CRAWL#<prd_cd>
+  > total_cnt, is_saved
 * 상품 코드표 ui만들기 -> table설계 PK가 stdPrdlstCode(품목코드)
 
 # Solved
