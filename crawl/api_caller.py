@@ -17,7 +17,7 @@ class Crawler():
             jo = json.loads(data.content)
             body = jo['response']['body']
             total_cnt = body['totalCount']
-            print('total_cnt:', total_cnt)
+            print(f'{prd_cd} total_cnt:', total_cnt)
 
             items = body['items']
             if items == '':
@@ -32,13 +32,14 @@ class Crawler():
             data = [data]
 
         jo = data
+        succeed = 0
         for value in jo:
             try:
                 self.t.insert_into_db(self.parser.parse_float(value), date, prd_cd, value['rnum'])
-                print(f"{value['rnum']}/{len(data)}", 'has been succeed')
+                succeed += 1
             except Exception as e:
                 print(e)
-        print(f'{delng_de} {prd_cd} crawl finished')
+        print(f'{delng_de} {prd_cd} crawl finished total:{len(jo)} succeed:{succeed}')
 
         # data저장이 완료 되면 pk:<date> sk:CRAWL#<prd_cd>로 total count를 저장한다.
         row = {
@@ -101,7 +102,7 @@ if __name__ == '__main__':
     # 오늘 날짜에 이미 수집한 prd_cd는 뺀다.
     date = '20210517'
 
-    for code in cr.get_target_prdcd(date)[127:]:
+    for code in cr.get_target_prdcd(date)[135:]:
         key = 'Opchl4dUTt5YAAlLu0c%2BsGORkwekJdrfjhlKff2NiYhU%2FaEulm5Wk9fIJH2My7jhE9snVCr83ymkEj%2BLMj99Uw%3D%3D'
         r = cr.call_api(key, date, code)
         # cr.save_data(r, f'./{date}/{code}.json')

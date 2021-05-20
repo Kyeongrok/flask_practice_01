@@ -6,11 +6,13 @@
 
 # Next
 * 날짜별로 모든 데이터 수집
-* crawl한 결과를 저장하는 기능
-  > pk는 date, sk는 CRAWL#<prd_cd>
-  > total_cnt, is_saved
 * 상품 코드표 ui만들기 -> table설계 PK가 stdPrdlstCode(품목코드)
+* crawl로직 lambda로 배포하고 flask에서 parameter넘겨서 trigger하게
+> date, prd_cd를 넘김
 
 # Solved
 * column중에 float이 있는 경우 안들어가서 Decimal로 바꿔서 insert함
 * 400KB 초과 하면 안됨 An error occurred (ValidationException) when calling the PutItem operation: Item size has exceeded the maximum allowed size
+* crawl한 결과를 저장하는 기능
+  > pk는 date, sk는 CRAWL#<prd_cd>
+  > total_cnt, is_saved
