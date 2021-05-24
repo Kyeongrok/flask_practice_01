@@ -1,6 +1,7 @@
 import requests, json
 import pandas as pd
-import os
+import os, csv
+from datetime import datetime
 from flaskblog.domain.dynamo_table import Table
 
 from parse.auction_data_parser import Parser
@@ -11,13 +12,15 @@ class Crawler():
         self.parser = Parser()
 
     def call_api(self, key, date, prd_cd, limit=30000):
+        print(prd_cd, date)
         url = f'http://apis.data.go.kr/B552895/openapi/service/OrgPriceAuctionService/getExactProdPriceList?ServiceKey={key}&pageNo=1&numOfRows={limit}&delngDe={date}&prdlstCd={prd_cd}&_type=json'
+        print(url)
         data = requests.get(url)
         try:
             jo = json.loads(data.content)
             body = jo['response']['body']
             total_cnt = body['totalCount']
-            print(f'{prd_cd} total_cnt:', total_cnt)
+            print(f'{prd_cd} total_cnt:{total_cnt} {datetime.now()}')
 
             items = body['items']
             if items == '':
@@ -26,7 +29,7 @@ class Crawler():
         except Exception as e:
             print(date, prd_cd, e)
 
-    def save_data_into_db(self, data, delng_de, prd_cd):
+    def save_data_into_db(self, data, delng_de, prd_cd, prd_nm):
         # data 저장
         if isinstance(data, dict):  # 1개인경우 dict로 오기 때문에 감싸줌
             data = [data]
@@ -39,13 +42,14 @@ class Crawler():
                 succeed += 1
             except Exception as e:
                 print(e)
-        print(f'{delng_de} {prd_cd} crawl finished total:{len(jo)} succeed:{succeed}')
+        print(f'{delng_de} {prd_cd} crawl finished at {datetime.now()} total:{len(jo)} succeed:{succeed}')
 
         # data저장이 완료 되면 pk:<date> sk:CRAWL#<prd_cd>로 total count를 저장한다.
         row = {
             'date': f'{delng_de}',
             'prdcd_whsal_mrkt_new_cd': f'CRAWL#{prd_cd}',
-            'total_cnt': len(data)
+            'total_cnt': len(data),
+            'prd_nm': prd_nm
         }
         self.t.insert(row)
 
@@ -57,13 +61,15 @@ class Crawler():
         '''
 
         t = []
-
         # 이전에 수집된 결과를 dynamodb에서 select합니다.
-
-
-        for l in open('std_prd_cd.csv').readlines():
-            t.append(l.replace('\n', ''))
+        for l in self.read_csv_file_into_list('./std_prd_cd.csv', delimiter='\t'):
+            t.append({'prdcd':l[0], 'prdnm':l[1]})
         return t
+
+    def read_csv_file_into_list(self, filename, delimiter=',', encoding='utf-8'):
+        with open(filename, newline='', encoding=encoding) as f:
+            ll = csv.reader(f, delimiter=delimiter)
+            return list(ll)
 
     def save_data(self, data, target_filename):
         # data가 없다면 저장하지 않는다.
@@ -100,10 +106,17 @@ if __name__ == '__main__':
 
     # for date in dates:
     # 오늘 날짜에 이미 수집한 prd_cd는 뺀다.
-    date = '20210517'
+    date = '20210524'
 
-    for code in cr.get_target_prdcd(date)[135:]:
+    for info in cr.get_target_prdcd(date):
+        code = info['prdcd']
         key = 'Opchl4dUTt5YAAlLu0c%2BsGORkwekJdrfjhlKff2NiYhU%2FaEulm5Wk9fIJH2My7jhE9snVCr83ymkEj%2BLMj99Uw%3D%3D'
+
+        # db의 total_cnt와 cnt가 다르면 crawl한다. 그런데 알아보는 것 자체도 call이다.
+        print('eeee')
         r = cr.call_api(key, date, code)
+        print('ffff')
         # cr.save_data(r, f'./{date}/{code}.json')
-        cr.save_data_into_db(r, date, code)
+        cr.save_data_into_db(r, date, code, info['prdnm'])
+        print('gggg')
+

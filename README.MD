@@ -3,6 +3,8 @@
 
 # Inprogress
 * 어제 어떤 작물이 몇건 평균가격 얼마로
+* crawl_result에 작물명 입력되게
+
 
 # Next
 * 날짜별로 모든 데이터 수집
