@@ -2,7 +2,10 @@
 * python run.py
 
 # Inprogress
-* 어제 어떤 작물이 몇건 평균가격 얼마로
+* 어제 어떤 작물이 몇건 평균가격 얼마로 sbidPric, stdUnitNewNm
+* 평균 거래량
+> 합계 낼 때 std_unit_new_nm이 kg또는 ton(100kg)인데 반영해서 계산
+  
 * crawl_result에 작물명 입력되게
 
 

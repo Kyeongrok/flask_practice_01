@@ -11,11 +11,13 @@ class Crawler():
         self.t = Table('auction2')
         self.parser = Parser()
 
-    def call_api(self, key, date, prd_cd, limit=30000):
-        print(prd_cd, date)
-        url = f'http://apis.data.go.kr/B552895/openapi/service/OrgPriceAuctionService/getExactProdPriceList?ServiceKey={key}&pageNo=1&numOfRows={limit}&delngDe={date}&prdlstCd={prd_cd}&_type=json'
-        print(url)
+    def call_api(self, key, date, prd_cd, api_type='normal', limit=30000):
+        if api_type != 'real_time':
+            url = f'http://apis.data.go.kr/B552895/openapi/service/OrgPriceAuctionService/getExactProdPriceList?ServiceKey={key}&pageNo=1&numOfRows={limit}&delngDe={date}&prdlstCd={prd_cd}&_type=json'
+        else:
+            url = f'http://apis.data.go.kr/B552895/openapi/service/OrgPriceAuctionService/getRealProdPriceList?ServiceKey={key}&pageNo=1&numOfRows={limit}&delngDe={date}&prdlstCd={prd_cd}&_type=json'
         data = requests.get(url)
+        print(data)
         try:
             jo = json.loads(data.content)
             body = jo['response']['body']
@@ -28,6 +30,7 @@ class Crawler():
             return items['item']
         except Exception as e:
             print(date, prd_cd, e)
+            return []
 
     def save_data_into_db(self, data, delng_de, prd_cd, prd_nm):
         # data 저장
@@ -101,7 +104,6 @@ class Crawler():
 if __name__ == '__main__':
     dr = pd.date_range(start='20210517', end='20210517')
     dates = dr.strftime('%Y%m%d').tolist()
-    print(dates)
     cr = Crawler()
 
     # for date in dates:
@@ -110,13 +112,11 @@ if __name__ == '__main__':
 
     for info in cr.get_target_prdcd(date):
         code = info['prdcd']
-        key = 'Opchl4dUTt5YAAlLu0c%2BsGORkwekJdrfjhlKff2NiYhU%2FaEulm5Wk9fIJH2My7jhE9snVCr83ymkEj%2BLMj99Uw%3D%3D'
+        key = 'v8R92DMtagXwEBkXpUTDVeMnGRfqgBxl5hLAo7ZiHza6nYFzFfTmCbCxhaQ%2BtAcxai0C02ae8APsMciGrKd5xg%3D%3D'
 
         # db의 total_cnt와 cnt가 다르면 crawl한다. 그런데 알아보는 것 자체도 call이다.
-        print('eeee')
         r = cr.call_api(key, date, code)
-        print('ffff')
         # cr.save_data(r, f'./{date}/{code}.json')
+        print(info)
         cr.save_data_into_db(r, date, code, info['prdnm'])
-        print('gggg')
 
