@@ -32,6 +32,27 @@ class Crawler():
             print(date, prd_cd, e)
             return []
 
+    def call_api_market_list(self, key, date, whsal_cd, api_type='normal', limit=30000):
+        if api_type != 'real_time':
+            url = f'http://apis.data.go.kr/B552895/openapi/service/OrgPriceAuctionService/getExactMarketPriceList?ServiceKey={key}&pageNo=1&numOfRows={limit}&whsalCd={whsal_cd}&delngDe={date}&_type=json'
+        else:
+            url = f'http://apis.data.go.kr/B552895/openapi/service/OrgPriceAuctionService/getRealMarketPriceList?ServiceKey={key}&pageNo=1&numOfRows={limit}&whsalCd={whsal_cd}&delngDe={date}&_type=json'
+        print(url)
+        data = requests.get(url)
+        try:
+            jo = json.loads(data.content)
+            body = jo['response']['body']
+            total_cnt = body['totalCount']
+            print(f'{date} total_cnt:{total_cnt} {datetime.now()}')
+
+            items = body['items']
+            if items == '':
+                return []
+            return items['item']
+        except Exception as e:
+            print(date, e)
+            return []
+
     def save_data_into_db(self, data, delng_de, prd_cd, prd_nm):
         # data 저장
         if isinstance(data, dict):  # 1개인경우 dict로 오기 때문에 감싸줌
@@ -41,10 +62,10 @@ class Crawler():
         succeed = 0
         for value in jo:
             try:
-                self.t.insert_into_db(self.parser.parse_float(value), date, prd_cd, value['rnum'])
+                self.t.insert_into_db(self.parser.parse_float(value), delng_de, prd_cd, value['rnum'])
                 succeed += 1
             except Exception as e:
-                print(e)
+                print('during insert into db', e)
         print(f'{delng_de} {prd_cd} crawl finished at {datetime.now()} total:{len(jo)} succeed:{succeed}')
 
         # data저장이 완료 되면 pk:<date> sk:CRAWL#<prd_cd>로 total count를 저장한다.
@@ -52,12 +73,13 @@ class Crawler():
             'date': f'{delng_de}',
             'prdcd_whsal_mrkt_new_cd': f'CRAWL#{prd_cd}',
             'total_cnt': len(data),
+            'total_price': 0,
             'prd_nm': prd_nm
         }
         self.t.insert(row)
 
 
-    def get_target_prdcd(self, delng_de):
+    def get_target_prdcd(self):
         '''
         :param delng_de: %Y%m%d 형식
         :return 데이터를 수집할 대상을 []로
@@ -65,7 +87,7 @@ class Crawler():
 
         t = []
         # 이전에 수집된 결과를 dynamodb에서 select합니다.
-        for l in self.read_csv_file_into_list('./std_prd_cd.csv', delimiter='\t'):
+        for l in self.read_csv_file_into_list('../std_prd_cd.csv', delimiter='\t'):
             t.append({'prdcd':l[0], 'prdnm':l[1]})
         return t
 
@@ -110,7 +132,7 @@ if __name__ == '__main__':
     # 오늘 날짜에 이미 수집한 prd_cd는 뺀다.
     date = '20210524'
 
-    for info in cr.get_target_prdcd(date):
+    for info in cr.get_target_prdcd():
         code = info['prdcd']
         key = 'v8R92DMtagXwEBkXpUTDVeMnGRfqgBxl5hLAo7ZiHza6nYFzFfTmCbCxhaQ%2BtAcxai0C02ae8APsMciGrKd5xg%3D%3D'
 

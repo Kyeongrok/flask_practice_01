@@ -68,7 +68,7 @@ class Table():
             'sbid_pric': jo['sbidPric'],
             'std_unit_new_nm': jo['stdUnitNewNm'],
             'delng_prut': jo['delngPrut'],
-            'delng_qy': jo['delng_qy'],
+            'delng_qy': jo['delngQy'],
             'data1': jo,
         }
         try:

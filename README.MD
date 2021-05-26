@@ -14,6 +14,7 @@
 * 상품 코드표 ui만들기 -> table설계 PK가 stdPrdlstCode(품목코드)
 * crawl로직 lambda로 배포하고 flask에서 parameter넘겨서 trigger하게
 > date, prd_cd를 넘김
+* bulk insert도입하기 지금은 너무 느림
 
 # Solved
 * column중에 float이 있는 경우 안들어가서 Decimal로 바꿔서 insert함
