@@ -98,8 +98,9 @@ class Crawler():
 
     def save_data(self, data, target_filename):
         # data가 없다면 저장하지 않는다.
+        print(f'start save data({len(data)}) into file {target_filename}')
         if len(data) == 0:
-            print(f'{target_filename} size:{len(data)} 저장하지 않습니다.')
+            print(f'{target_filename} size:{len(data)} 저장하지 않습니다. 데이터 개수 0개')
             return 1
 
         #filename, path분리하기

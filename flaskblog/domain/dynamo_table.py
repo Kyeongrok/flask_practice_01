@@ -66,10 +66,14 @@ class Table():
             'date': f'{date}',
             'prdcd_whsal_mrkt_new_cd': f'RAW#{prd_cd}#{rnum}',
             'sbid_pric': jo['sbidPric'],
+            'std_frmlc_new_nm': jo['stdFrmlcNewNm'],
             'std_unit_new_nm': jo['stdUnitNewNm'],
+            'std_mg_new_nm': jo['stdMgNewNm'],
             'delng_prut': jo['delngPrut'],
+            'delng_de': jo['delngDe'],
+            'whsal_mrkt_nm': jo['whsalMrktNm'],
             'delng_qy': jo['delngQy'],
-            'data1': jo,
+            # 'data1': jo,
         }
         try:
             self.insert(row)

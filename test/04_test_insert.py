@@ -30,10 +30,10 @@ if __name__ == '__main__':
         jo = p.load_json_file(fn)
         print('insert started ', fn, len(jo))
         # jo = p.make_map(jo, 'whsalMrktNewCode')
-        for value in jo:
+        for row in jo:
             try:
-                t.insert_into_db(value, date, prd_cd, value['rnum'])
-                print(value['rnum'], 'has been succeed')
+                t.insert_into_db(row, date, prd_cd, row['rnum'])
+                print(row['rnum'], 'has been succeed')
             except Exception as e:
                 print(e)
         print(f'{fn} finished')
