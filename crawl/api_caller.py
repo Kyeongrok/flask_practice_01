@@ -17,7 +17,7 @@ class Crawler():
         else:
             url = f'http://apis.data.go.kr/B552895/openapi/service/OrgPriceAuctionService/getRealProdPriceList?ServiceKey={key}&pageNo=1&numOfRows={limit}&delngDe={date}&prdlstCd={prd_cd}&_type=json'
         data = requests.get(url)
-        print(data)
+        print(data, url)
         try:
             jo = json.loads(data.content)
             body = jo['response']['body']
@@ -53,30 +53,30 @@ class Crawler():
             print(date, e)
             return []
 
-    def save_data_into_db(self, data, delng_de, prd_cd, prd_nm):
+    def save_data_into_db(self, parse_result, delng_de, prd_cd, prd_nm):
         # data 저장
-        if isinstance(data, dict):  # 1개인경우 dict로 오기 때문에 감싸줌
-            data = [data]
 
-        jo = data
         succeed = 0
-        for value in jo:
+        for value in parse_result['data']:
             try:
                 self.t.insert_into_db(self.parser.parse_float(value), delng_de, prd_cd, value['rnum'])
                 succeed += 1
             except Exception as e:
                 print('during insert into db', e)
-        print(f'{delng_de} {prd_cd} crawl finished at {datetime.now()} total:{len(jo)} succeed:{succeed}')
+        print(f'{delng_de} {prd_cd} crawl finished at {datetime.now()} total:{parse_result["cnt"]} succeed:{succeed}')
 
-        # data저장이 완료 되면 pk:<date> sk:CRAWL#<prd_cd>로 total count를 저장한다.
-        row = {
-            'date': f'{delng_de}',
-            'prdcd_whsal_mrkt_new_cd': f'CRAWL#{prd_cd}',
-            'total_cnt': len(data),
-            'total_price': 0,
-            'prd_nm': prd_nm
-        }
-        self.t.insert(row)
+        # 0보다 커야 insert
+        if parse_result['cnt'] > 0:
+            # data저장이 완료 되면 pk:<date> sk:CRAWL#<prd_cd>로 total count를 저장한다.
+            row = {
+                'date': f'{delng_de}',
+                'prdcd_whsal_mrkt_new_cd': f'CRAWL#{prd_cd}',
+                'total_cnt': parse_result['cnt'],
+                'mean_sbid_pric': parse_result['mean_sbid_pric'],
+                'sum_sbid_pric': parse_result['sum_sbid_pric'],
+                'prd_nm': prd_nm
+            }
+            self.t.insert(row)
 
 
     def get_target_prdcd(self):
@@ -125,21 +125,5 @@ class Crawler():
 
 
 if __name__ == '__main__':
-    dr = pd.date_range(start='20210517', end='20210517')
-    dates = dr.strftime('%Y%m%d').tolist()
     cr = Crawler()
-
-    # for date in dates:
-    # 오늘 날짜에 이미 수집한 prd_cd는 뺀다.
-    date = '20210524'
-
-    for info in cr.get_target_prdcd():
-        code = info['prdcd']
-        key = 'v8R92DMtagXwEBkXpUTDVeMnGRfqgBxl5hLAo7ZiHza6nYFzFfTmCbCxhaQ%2BtAcxai0C02ae8APsMciGrKd5xg%3D%3D'
-
-        # db의 total_cnt와 cnt가 다르면 crawl한다. 그런데 알아보는 것 자체도 call이다.
-        r = cr.call_api(key, date, code)
-        # cr.save_data(r, f'./{date}/{code}.json')
-        print(info)
-        cr.save_data_into_db(r, date, code, info['prdnm'])
 

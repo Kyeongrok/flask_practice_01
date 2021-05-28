@@ -5,6 +5,26 @@ class Parser():
     # db에 넣을 수 있는 모양으로 parsing해서 file에 저장하는 기능
     # float을 파싱하는 기능
 
+    def calc_value(self, data):
+        if isinstance(data, dict):  # 1개인경우 dict로 오기 때문에 감싸줌
+            data = [data]
+
+        sum_sbid_pric = 0
+        cnt = len(data)
+
+        for item in data:
+            # ton이면 kg단위로 변환 해줄 것
+            # 단위가 ton인 것 문제 없는지? ton이면 가격이 *3으로 나올 것임
+            mpk = int(round(item['sbidPric'] / item['delngPrut'], 0))
+            sum_sbid_pric += item['sbidPric']
+            item['mean_pric_per_prut'] = mpk
+
+        if cnt > 0:
+            mean_sbid_pric = int(round(sum_sbid_pric / cnt))
+        else:
+            mean_sbid_pric = 0
+        return {'sum_sbid_pric':sum_sbid_pric, 'mean_sbid_pric':mean_sbid_pric, 'data':data, 'cnt':cnt}
+
     def parse_float(self, d):
         '''
         float이 있으면 Decimal로 바꾼다
