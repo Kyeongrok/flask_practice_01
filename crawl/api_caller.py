@@ -5,6 +5,7 @@ from datetime import datetime
 from flaskblog.domain.dynamo_table import Table
 
 from parse.auction_data_parser import Parser
+os.chdir(os.path.dirname(__file__))
 
 class Crawler():
     def __init__(self):
@@ -87,7 +88,7 @@ class Crawler():
 
         t = []
         # 이전에 수집된 결과를 dynamodb에서 select합니다.
-        for l in self.read_csv_file_into_list('../std_prd_cd.csv', delimiter='\t'):
+        for l in self.read_csv_file_into_list('./std_prd_cd.csv', delimiter='\t'):
             t.append({'prdcd':l[0], 'prdnm':l[1]})
         return t
 
@@ -98,9 +99,9 @@ class Crawler():
 
     def save_data(self, data, target_filename):
         # data가 없다면 저장하지 않는다.
-        print(f'start save data({len(data)}) into file {target_filename}')
-        if len(data) == 0:
-            print(f'{target_filename} size:{len(data)} 저장하지 않습니다. 데이터 개수 0개')
+        print(f'start save data({data["cnt"]}) into file {target_filename}')
+        if data['cnt'] == 0:
+            print(f'{target_filename} size:{data["cnt"]} 저장하지 않습니다. 데이터 개수 0개')
             return 1
 
         #filename, path분리하기
@@ -114,15 +115,10 @@ class Crawler():
         # file로 저장하지 말고 db로 바로 저장하고 결과를 보여주게
         # file저장
         with open(target_filename, 'w+') as f:
-
-            if isinstance(data, dict): # 1개인경우 dict로 오기 때문에 감싸줌
-                data = [data]
             # whsalMrktNewCode별로 구분해서 저장
             # data = Parser().make_map(data, 'whsalMrktNewCode')
             f.write(json.dumps(data))
             print(f'{target_filename} saved...')
-
-
 
 if __name__ == '__main__':
     cr = Crawler()

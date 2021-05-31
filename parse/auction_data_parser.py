@@ -12,18 +12,19 @@ class Parser():
         sum_sbid_pric = 0
         cnt = len(data)
 
-        for item in data:
-            # ton이면 kg단위로 변환 해줄 것
-            # 단위가 ton인 것 문제 없는지? ton이면 가격이 *3으로 나올 것임
-            mpk = int(round(item['sbidPric'] / item['delngPrut'], 0))
-            sum_sbid_pric += item['sbidPric']
-            item['mean_pric_per_prut'] = mpk
-
-        if cnt > 0:
-            mean_sbid_pric = int(round(sum_sbid_pric / cnt))
-        else:
-            mean_sbid_pric = 0
-        return {'sum_sbid_pric':sum_sbid_pric, 'mean_sbid_pric':mean_sbid_pric, 'data':data, 'cnt':cnt}
+        # for item in data:
+        #     # ton이면 kg단위로 변환 해줄 것
+        #     # 단위가 ton인 것 문제 없는지? ton이면 가격이 *3으로 나올 것임
+        #     mpk = int(round(item['sbidPric'] / item['delngPrut'], 0))
+        #     sum_sbid_pric += item['sbidPric']
+        #     item['mean_pric_per_prut'] = mpk
+        #
+        # if cnt > 0:
+        #     mean_sbid_pric = int(round(sum_sbid_pric / cnt))
+        # else:
+        #     mean_sbid_pric = 0
+        # return {'sum_sbid_pric':sum_sbid_pric, 'mean_sbid_pric':mean_sbid_pric, 'data':data, 'cnt':cnt}
+        return {'data':data, 'cnt':cnt}
 
     def parse_float(self, d):
         '''
@@ -33,6 +34,7 @@ class Parser():
         for key, value in d.items():
             # print(value, type(value), isinstance(value, float))
             if isinstance(value, float):
+                value = round(value, 2) # float 2째자리에서 반올림
                 dec_val = Decimal(str(value))
                 value = dec_val
                 d[key] = value

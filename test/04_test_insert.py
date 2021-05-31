@@ -3,11 +3,11 @@ import glob
 from parse.auction_data_parser import Parser
 
 
-def file_insert_into_db(jo, date, prd_cd, rnum):
+def file_insert_into_db(jo, date, sk, rnum):
     # print(jo)
     row = {
         'date': f'{date}',
-        'prdcd_whsal_mrkt_new_cd': f'{prd_cd}#{rnum}',
+        'prdcd_whsal_mrkt_new_cd': sk,
         'data1': jo
     }
     try:
