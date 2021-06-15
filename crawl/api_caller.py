@@ -75,24 +75,32 @@ class Crawler():
                 'date': f'{delng_de}',
                 'prdcd_whsal_mrkt_new_cd': f'CRAWL#{prd_cd}',
                 'total_cnt': parse_result['cnt'],
-                'mean_sbid_pric': parse_result['mean_sbid_pric'],
-                'sum_sbid_pric': parse_result['sum_sbid_pric'],
+                # 'mean_sbid_pric': parse_result['mean_sbid_pric'],
+                # 'sum_sbid_pric': parse_result['sum_sbid_pric'],
                 'prd_nm': prd_nm
             }
             self.t.insert(row)
 
 
-    def get_target_prdcd(self):
+    def get_target_prdcd(self, type='list'):
         '''
         :param delng_de: %Y%m%d 형식
         :return 데이터를 수집할 대상을 []로
         '''
 
         t = []
+        m = {}
         # 이전에 수집된 결과를 dynamodb에서 select합니다.
         for l in self.read_csv_file_into_list('./std_prd_cd.csv', delimiter='\t'):
             t.append({'prdcd':l[0], 'prdnm':l[1]})
-        return t
+            m[l[0]] = l[1]
+
+        if type == 'list':
+            return t
+        elif type == 'map':
+            return m
+        else:
+            print('error')
 
     def read_csv_file_into_list(self, filename, delimiter=',', encoding='utf-8'):
         with open(filename, newline='', encoding=encoding) as f:
@@ -110,7 +118,7 @@ class Crawler():
         location, filename = os.path.split(target_filename)
 
         # dir이 없다면 생성합니다.
-        print(os.path.isdir(location))
+        print(f'{location} isdir:', os.path.isdir(location))
         if not os.path.isdir(location):
             os.makedirs(location)
 

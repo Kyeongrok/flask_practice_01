@@ -14,20 +14,10 @@ def prdnm_map():
             m[info['prdcd']] = info['prdnm']
     return m
 
-def insert_agg(jo, date, prdcd):
-    m = agg(jo['data'])
-    t.insert({
-        'date': f'{date}',
-        'prdcd_whsal_mrkt_new_cd': f'CRAWL#{prdcd}',
-        'total_cnt': jo['cnt'],
-        'prd_nm': m_prdnm[prdcd],
-        'agg': m,
-    })
-    print('success agg insert')
 
 if __name__ == '__main__':
     t = Table('auction2')
-    fns = glob('../crawl/20210531/*.json')
+    fns = glob('../crawl/20210602/*.json')
     print(len(fns))
     m_prdnm = prdnm_map()
 

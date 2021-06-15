@@ -73,7 +73,7 @@ class Table():
             'delng_de': jo['delngDe'],
             'whsal_mrkt_nm': jo['whsalMrktNm'],
             'delng_qy': jo['delngQy'],
-            'mean_pric_per_prut': jo['mean_pric_per_prut'],
+            # 'mean_pric_per_prut': jo['mean_pric_per_prut'],
             # 'data1': jo,
         }
         try:
