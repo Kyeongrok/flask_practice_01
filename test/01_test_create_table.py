@@ -1,18 +1,33 @@
-from flaskblog.domain.dynamo_table import Table
+import boto3
 
 if __name__ == '__main__':
-    t = Table('auction_prd_info')
-    t.create_table(
-        key_schema=[
+    dynamodb = boto3.resource('dynamodb')
+
+    table = dynamodb.create_table(
+        TableName='students',
+        KeySchema=[
             {
-                'AttributeName': 'prdcd',
+                'AttributeName': 'class',
                 'KeyType': 'HASH'
-            }
-        ],
-        attribute_definitions=[
+            },
             {
-                'AttributeName': 'date',
-                'AttributeType': 'S'
+                'AttributeName': 'no',
+                'KeyType': 'RANGE'
             }
         ],
+        AttributeDefinitions=[
+            {
+                'AttributeName': 'class',
+                'AttributeType': 'N'
+            },
+            {
+                'AttributeName': 'no',
+                'AttributeType': 'N'
+            }
+        ],
+        ProvisionedThroughput={
+            'ReadCapacityUnits': 10,
+            'WriteCapacityUnits': 10
+        }
     )
+    print(table)

@@ -13,8 +13,10 @@ class Crawler():
         self.parser = Parser()
 
     def call_api(self, key, date, prd_cd, api_type='normal', limit=30000):
-        if api_type != 'real_time':
+        if api_type == 'normal':
             url = f'http://apis.data.go.kr/B552895/openapi/service/OrgPriceAuctionService/getExactProdPriceList?ServiceKey={key}&pageNo=1&numOfRows={limit}&delngDe={date}&prdlstCd={prd_cd}&_type=json'
+        elif api_type == 'exact_market':
+            url = f'http://apis.data.go.kr/B552895/openapi/service/OrgPriceAuctionService/getExactMarketPriceList?ServiceKey={key}&pageNo=1&numOfRows={limit}&delngDe={date}&_type=json'
         else:
             url = f'http://apis.data.go.kr/B552895/openapi/service/OrgPriceAuctionService/getRealProdPriceList?ServiceKey={key}&pageNo=1&numOfRows={limit}&delngDe={date}&prdlstCd={prd_cd}&_type=json'
         data = requests.get(url)

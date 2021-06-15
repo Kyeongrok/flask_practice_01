@@ -27,13 +27,13 @@ def insert_agg(jo, date, prdcd):
 
 if __name__ == '__main__':
     t = Table('auction2')
-    fns = glob('../crawl/test/20210527/*.json')
+    fns = glob('../crawl/20210531/*.json')
     print(len(fns))
     m_prdnm = prdnm_map()
 
     for fn in fns:
         with open(fn) as f:
-            fn = fn.replace('../crawl/test/', '').replace('.json', '')
+            fn = fn.replace('../crawl/', '').replace('.json', '')
             date, prdcd = fn.split('/')
             jo = json.loads(f.read())
             insert_agg(jo, date, prdcd)

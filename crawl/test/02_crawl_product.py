@@ -11,11 +11,11 @@ cr = Crawler()
 pa = Parser()
 
 key = 'v8R92DMtagXwEBkXpUTDVeMnGRfqgBxl5hLAo7ZiHza6nYFzFfTmCbCxhaQ%2BtAcxai0C02ae8APsMciGrKd5xg%3D%3D'
-for info in cr.get_target_prdcd()[126:]:
+for info in cr.get_target_prdcd()[125:]:
     code = info['prdcd']
-    date = '20210527'
+    date = '20210602'
     r = cr.call_api(key, date, code)
     r = pa.calc_value(r)
     # cr.save_data_into_db(r, date, code, info['prdnm'])
-    cr.save_data(r, f'./20210527/{code}.json')
+    cr.save_data(r, f'./{date}/{code}.json')
 
